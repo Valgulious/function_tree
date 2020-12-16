@@ -244,25 +244,39 @@ export class Tree {
         return root
     }
 
-    //TODO
     private static toArray(root: Node | null): (string | number | null)[] {
         if (root === null) {
             return []
         }
-        const stack: (Node | null)[] = [root]
-        const result: (string | number | null)[] = []
-        while (stack.length !== 0) {
-            const first = stack.shift()
-            if (first) {
-                stack.push(first.left, first.right)
-            }
-            if (first) {
-                result.push(first.value)
-            } else {
-                result.push(null)
-            }
+        // const stack: (Node | null)[] = [root]
+        // const result: (string | number | null)[] = []
+        // while (stack.length !== 0) {
+        //     const first = stack.shift()
+        //     if (first) {
+        //         stack.push(first.left, first.right)
+        //     }
+        //     if (first) {
+        //         result.push(first.value)
+        //     } else {
+        //         result.push(null)
+        //     }
+        // }
+        // return result
+        return this.whileToArray([root])
+    }
+
+    private static whileToArray(stack: (Node | null)[]): (string | number | null)[] {
+        if (stack.length === 0) {
+            return []
         }
-        return result
+
+        const first = stack[0]
+        if (first) {
+            return [first.value, ...this.whileToArray([...stack.slice(1), first.left, first.right])]
+        } else {
+            return [null, ...this.whileToArray([...stack.slice(1)])]
+        }
+
     }
 
     private getFullTree(root: Node | null/*, fakeRoot: Node*/): Node {
