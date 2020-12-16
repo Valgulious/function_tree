@@ -211,24 +211,49 @@ export class Tree {
     //TODO
     // Возвращает индекс оператора с наименьшим приоритетом
     private getLowPriorityToken = (tokensArray: string[]): number => {
-        let lowPriority = Number.MAX_VALUE
-        let index = -1
-        let parenthesesCount = 0
-        for (let i = 0; i < tokensArray.length; ++i) {
-            const token = tokensArray[i]
-            if (operators.includes(token) && parenthesesCount === 0) {
-                const tokenPriority = this.getPriority(token)
-                if (tokenPriority < lowPriority) {
-                    lowPriority = tokenPriority
-                    index = i
-                }
-            } else if (token === '(') {
-                ++parenthesesCount
-            } else if (token === ')') {
-                --parenthesesCount
-            }
+        const lowPriority = Number.MAX_VALUE
+        const index = -1
+        const parenthesesCount = 0
+        // for (let i = 0; i < tokensArray.length; ++i) {
+        //     const token = tokensArray[i]
+        //     if (operators.includes(token) && parenthesesCount === 0) {
+        //         const tokenPriority = this.getPriority(token)
+        //         if (tokenPriority < lowPriority) {
+        //             lowPriority = tokenPriority
+        //             index = i
+        //         }
+        //     } else if (token === '(') {
+        //         ++parenthesesCount
+        //     } else if (token === ')') {
+        //         --parenthesesCount
+        //     }
+        // }
+        // return index
+        return this.forLow(tokensArray, lowPriority, parenthesesCount, 0, index)
+    }
+
+    private forLow (tokensArray: string[], lowPriority: number, parenthesesCount: number, i: number, index: number): number {
+        if (tokensArray.length === 0) {
+            return index
         }
-        return index
+
+        const token = tokensArray[0]
+        if (operators.includes(token) && parenthesesCount === 0) {
+            const tokenPriority = this.getPriority(token)
+            if (tokenPriority < lowPriority) {
+                // lowPriority = tokenPriority
+                const newIndex = i
+                return this.forLow(tokensArray.slice(1), tokenPriority, parenthesesCount, ++i, newIndex)
+            } else {
+                return this.forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+            }
+        } else if (token === '(') {
+            return this.forLow(tokensArray.slice(1), lowPriority, ++parenthesesCount, ++i, index)
+        } else if (token === ')') {
+            return this.forLow(tokensArray.slice(1), lowPriority, --parenthesesCount, ++i, index)
+        } else {
+            return this.forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+        }
     }
 
     private getFullEmptyTree(height: number, root?: Node | undefined) {
