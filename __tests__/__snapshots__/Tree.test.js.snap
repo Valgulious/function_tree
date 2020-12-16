@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Deleting nodes should remove leaf 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": Node {
+      "left": null,
+      "right": null,
+      "value": "1",
+    },
+    "right": Node {
+      "left": Node {
+        "left": null,
+        "right": null,
+        "value": "2",
+      },
+      "right": Node {
+        "left": Node {
+          "left": null,
+          "right": null,
+          "value": "3",
+        },
+        "right": null,
+        "value": "+",
+      },
+      "value": "*",
+    },
+    "value": "+",
+  },
+}
+`;
+
+exports[`Deleting nodes should remove node and its children 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": Node {
+      "left": null,
+      "right": null,
+      "value": "1",
+    },
+    "right": null,
+    "value": "+",
+  },
+}
+`;
+
+exports[`Deleting nodes should remove one node 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": null,
+    "right": Node {
+      "left": null,
+      "right": null,
+      "value": "1",
+    },
+    "value": "+",
+  },
+}
+`;
+
+exports[`Deleting nodes should remove root of tree 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": null,
+}
+`;
+
+exports[`Inserting nodes should be simple and return 2 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": Node {
+      "left": null,
+      "right": null,
+      "value": "1",
+    },
+    "right": Node {
+      "left": null,
+      "right": null,
+      "value": 1,
+    },
+    "value": "+",
+  },
+}
+`;
+
+exports[`Inserting nodes should not insert value into level 2 on empty tree 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": null,
+}
+`;
+
+exports[`Inserting nodes should parse expression, insert some nodes, and return 88 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": Node {
+      "left": null,
+      "right": null,
+      "value": 11,
+    },
+    "right": Node {
+      "left": Node {
+        "left": Node {
+          "left": null,
+          "right": null,
+          "value": 5,
+        },
+        "right": Node {
+          "left": null,
+          "right": null,
+          "value": 6,
+        },
+        "value": "+",
+      },
+      "right": Node {
+        "left": Node {
+          "left": null,
+          "right": null,
+          "value": "3",
+        },
+        "right": Node {
+          "left": null,
+          "right": null,
+          "value": "4",
+        },
+        "value": "+",
+      },
+      "value": "*",
+    },
+    "value": "+",
+  },
+}
+`;
+
+exports[`Inserting nodes should replace root node operator 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": Node {
+    "left": Node {
+      "left": null,
+      "right": null,
+      "value": "1",
+    },
+    "right": Node {
+      "left": null,
+      "right": null,
+      "value": 1,
+    },
+    "value": "-",
+  },
+}
+`;
+
+exports[`Inserting nodes should throw error on empty tree 1`] = `
+Tree {
+  "getLowPriorityToken": [Function],
+  "getPriority": [Function],
+  "root": null,
+}
+`;
