@@ -41,13 +41,11 @@ export class Tree {
                     return this.solve(left) / this.solve(right)
             }
         } else {
-            let err
             if (typeof value === 'string' && value.trim() === '') {
-                err = new Error('Empty node')
+                throw new Error('Empty node')
             } else {
-                err = new Error(`Invalid character ${value}`)
+                throw new Error(`Invalid character ${value}`)
             }
-            throw err
         }
     }
 
