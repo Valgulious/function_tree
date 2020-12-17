@@ -85,7 +85,11 @@ export class Tree {
 
 const expr = (expression: string): Tree => {
     const tokens = expression.split('').filter(el => el !== ' ')
-    return new Tree(gen(tokens))
+    if (tokens.length !== 0) {
+        return new Tree(gen(tokens))
+    } else {
+        return new Tree()
+    }
 }
 
 const gen = (tokens: string[]): Node => {
