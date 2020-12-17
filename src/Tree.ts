@@ -260,7 +260,6 @@ const whileRemove = (currentNode: Node | null, parent: Node | null, localPositio
                      currentLevel: number, direction: PARENT | null, level: number): Node | null => {
 
     if (currentNode === null) {
-        console.log('curr = null')
         return null
     }
 
