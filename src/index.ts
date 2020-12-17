@@ -11,7 +11,7 @@ if (arg.length === 1) {
     process.exit(0)
 }
 
-const expression = '1 + 1 * 2'
+const expression = '1 + 1 * 2 + 1'
 const tree = expr(expression)
 // tree.expr(expr)
 console.log('tree')

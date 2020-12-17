@@ -111,12 +111,19 @@ const gen = (tokens: string[]): Node => {
 const getPriority = (operator: string): number => {
     // Сгруппированы в порядке возрастания приоритета
     const operatorsPriority = [['+', '-'], ['*', '/']]
-    operatorsPriority.forEach((item, index) => {
-        if (item.includes(operator)) {
-            return index
-        }
-    })
-    return -1
+    return forPriority(operator, operatorsPriority, 0)
+}
+
+const forPriority = (operator: string, operatorsPriority: string[][], i: number): number => {
+    if (operatorsPriority.length === 0) {
+        return -1
+    }
+
+    if (operatorsPriority[0].includes(operator)) {
+        return i
+    }
+
+    return forPriority(operator, operatorsPriority.slice(1), ++i)
 }
 
 // Возвращает индекс оператора с наименьшим приоритетом
@@ -255,8 +262,6 @@ const remove = (tree: Tree, level: number, position: number): Tree => {
 
 const whileRemove = (currentNode: Node | null, parent: Node | null, localPosition: number,
                      currentLevel: number, direction: PARENT | null, level: number): Node | null => {
-
-    console.log('currL = ' + currentLevel)
 
     if (currentNode === null) {
         console.log('curr = null')
