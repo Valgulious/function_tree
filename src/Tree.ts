@@ -224,7 +224,7 @@ const whileInsert = (currentNode: Node | null, localPosition: number, currentLev
     }
 
     if (level === currentLevel) {
-        return new Node(value)
+        return new Node(value, currentNode.left, currentNode.right)
     }
 
     const middle = Math.pow(2, level - currentLevel - 1)
