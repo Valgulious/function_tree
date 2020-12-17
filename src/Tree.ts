@@ -231,7 +231,8 @@ const whileInsert = (currentNode: Node | null, localPosition: number, currentLev
             return null
         }
         const newLocalPosition = localPosition - middle
-        return whileInsert(currentNode.right, newLocalPosition, currentLevel++, level, value)
+        const right = whileInsert(currentNode.right, newLocalPosition, ++currentLevel, level, value)
+        return new Node(currentNode.value, currentNode.left, right)
     } else {
         if (currentNode.left === null) {
             if (level === currentLevel + 1) {
@@ -239,7 +240,8 @@ const whileInsert = (currentNode: Node | null, localPosition: number, currentLev
             }
             return null
         }
-        return whileInsert(currentNode.left, localPosition, currentLevel++, level, value)
+        const left = whileInsert(currentNode.left, localPosition, ++currentLevel, level, value)
+        return new Node(currentNode.value, left, currentNode.right)
     }
 }
 
