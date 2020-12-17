@@ -1,19 +1,22 @@
-import {Tree} from './Tree'
+import {Tree, expr, treeSolve, insert} from './Tree'
 
 const arg = process.argv.slice(2)
 
 if (arg.length === 1) {
-    const tree = new Tree().expr(arg[0])
+    const tree = expr(arg[0])
     // tree.expr(arg[0])
     tree.print()
-    console.log(tree.solve())
+    console.log('here')
+    console.log(treeSolve(tree))
     process.exit(0)
 }
 
-const expr = '1 + 1 * 2'
-const tree = new Tree().expr(expr)
+const expression = '1 + 1 * 2'
+const tree = expr(expression)
 // tree.expr(expr)
 tree.print()
 tree.remove(2, 1)
-tree.insert(2, 2, 1)
-console.log(tree.solve())
+tree.print()
+const tree1 = insert(tree, 2, 2, 1)
+tree1.print()
+console.log(treeSolve(tree1))

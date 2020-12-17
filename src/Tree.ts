@@ -27,54 +27,6 @@ export class Tree {
     }
 
     //TODO
-    insert(value: string | number, level: number, position: number): number {
-        if (position > Math.pow(2, level - 1)) {
-            return -1
-        }
-
-        if (this.root === null) {
-            if (level === 1 && position === 1) {
-                this.root = new Node(value)
-            } else {
-                return -1
-            }
-        }
-
-        let currentNode = this.root
-        let localPosition = position
-        let currentLevel = 1
-        while (level !== currentLevel) {
-            const middle = Math.pow(2, level - currentLevel - 1)
-            // Если нужна позиция больше чем середина (для текущего уровня)
-            if (localPosition > middle) {
-                if (currentNode.right === null) {
-                    // Если справа пустая Node, но она нам и нужна
-                    if (level === currentLevel + 1 && localPosition <= 2) {
-                        currentNode.right = new Node(value)
-                        return 0
-                    }
-                    return -1
-                }
-                localPosition -= middle
-                currentNode = currentNode.right
-                currentLevel++
-            } else {
-                if (currentNode.left === null) {
-                    if (level === currentLevel + 1) {
-                        currentNode.left = new Node(value)
-                        return 0
-                    }
-                    return -1
-                }
-                currentNode = currentNode.left
-                currentLevel++
-            }
-        }
-        currentNode.value = value
-        return 0
-    }
-
-    //TODO
     remove(level: number, position: number): number {
         if (this.root === null) {
             if (level === 1 && position === 1) {
@@ -288,4 +240,59 @@ const solve = (root: Node | null = null): any => {
     }
 }
 
-export {expr, treeSolve}
+//TODO
+const insert = (tree: Tree | null, value: string | number, level: number, position: number): Tree => {
+    if (tree === null) {
+        return new Tree()
+    }
+
+    if (position > Math.pow(2, level - 1)) {
+        return tree
+    }
+
+    if (tree.root === null) {
+        if (level === 1 && position === 1) {
+            // this.root = new Node(value)
+            return new Tree(new Node(value))
+        } else {
+            return tree
+        }
+    }
+    return new Tree(whileInsert(tree.root, position, 1, level, value))
+}
+
+const whileInsert = (currentNode: Node | null, localPosition: number, currentLevel: number, level: number,
+                     value: string | number): Node | null => {
+
+    if (currentNode === null) {
+        return null
+    }
+
+    if (level === currentLevel) {
+        return new Node(value)
+    }
+
+    const middle = Math.pow(2, level - currentLevel - 1)
+    // Если нужна позиция больше чем середина (для текущего уровня)
+    if (localPosition > middle) {
+        if (currentNode.right === null) {
+            // Если справа пустая Node, но она нам и нужна
+            if (level === currentLevel + 1 && localPosition <= 2) {
+                return new Node(currentNode.value, currentNode.left, new Node(value))
+            }
+            return null
+        }
+        const newLocalPosition = localPosition - middle
+        return whileInsert(currentNode.right, newLocalPosition, currentLevel++, level, value)
+    } else {
+        if (currentNode.left === null) {
+            if (level === currentLevel + 1) {
+                return new Node(currentNode.value, new Node(value), currentNode.right)
+            }
+            return null
+        }
+        return whileInsert(currentNode.left, localPosition, currentLevel++, level, value)
+    }
+}
+
+export {expr, treeSolve, insert}
