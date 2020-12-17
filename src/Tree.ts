@@ -162,11 +162,7 @@ const forLow = (tokensArray: string[], lowPriority: number, parenthesesCount: nu
     }
 }
 
-const treeSolve = (tree: Tree | null): number => {
-    if (tree === null) {
-        return -1
-    }
-
+const treeSolve = (tree: Tree): number => {
     return solve(tree.root)
 }
 
