@@ -14,41 +14,6 @@ export class Tree {
         return this.getHeight(this.root)
     }
 
-    expr(expression: string): Tree {
-        const tokens = expression.split('').filter(el => el !== ' ')
-        return new Tree(this.gen(tokens))
-    }
-
-    solve(root: Node | null = this.root): any {
-        if (root === null) {
-            throw new Error('Tree is empty')
-        }
-        const {value, left, right} = root
-        if (!isNaN(parseFloat(value as string))) {
-            return parseFloat(value as string)
-        } else if (operators.includes(value as string)) {
-            if (left === null || right === null) {
-                throw new Error(`Need arguments for ${value}`)
-            }
-            switch (value) {
-                case '+':
-                    return this.solve(left) + this.solve(right)
-                case '-':
-                    return this.solve(left) - this.solve(right)
-                case '*':
-                    return this.solve(left) * this.solve(right)
-                case '/':
-                    return this.solve(left) / this.solve(right)
-            }
-        } else {
-            if (typeof value === 'string' && value.trim() === '') {
-                throw new Error('Empty node')
-            } else {
-                throw new Error(`Invalid character ${value}`)
-            }
-        }
-    }
-
     print() {
         const array = Tree.toArray(this.root)
         treeToASCII(treeFromArray(array))
@@ -165,95 +130,11 @@ export class Tree {
         return -1
     }
 
-    private gen(tokens: string[]): Node {
-        // const root = new Node()
-        if (tokens.length === 1) {
-            return new Node(tokens[0])
-        }
-        const lowPriorityIndex = this.getLowPriorityToken(tokens)
-        // Если нет оператора вне скобок
-        if (lowPriorityIndex === -1) {
-            if (tokens[0] !== LEFT_PARENTHESIS || tokens[tokens.length - 1] !== RIGHT_PARENTHESIS) {
-                throw new Error(`Don't know what to do with ${tokens}`)
-            }
-            return this.gen(tokens.slice(1, -1))
-        }
-        const value = tokens[lowPriorityIndex]
-        const left = this.gen(tokens.slice(0, lowPriorityIndex))
-        const right = this.gen(tokens.slice(lowPriorityIndex + 1))
-        return new Node(value, left, right)
-    }
-
     private getHeight(root: Node | null): number {
         if (root === null) {
             return 0
         }
         return 1 + Math.max(this.getHeight(root.left), this.getHeight(root.right))
-    }
-
-    // Возвращает приоритет оператора: чем больше возращаемое значение - тем больше приоритет
-    private getPriority = (operator: string): number => {
-        // Сгруппированы в порядке возрастания приоритета
-        const operatorsPriority = [['+', '-'], ['*', '/']]
-        operatorsPriority.forEach((item, index) => {
-            if (item.includes(operator)) {
-                return index
-            }
-        })
-        // for (let i = 0; i < operatorsPriority.length; ++i) {
-        //     if (operatorsPriority[i].includes(operator)) {
-        //         return i
-        //     }
-        // }
-        return -1
-    }
-
-    //TODO
-    // Возвращает индекс оператора с наименьшим приоритетом
-    private getLowPriorityToken = (tokensArray: string[]): number => {
-        const lowPriority = Number.MAX_VALUE
-        const index = -1
-        const parenthesesCount = 0
-        // for (let i = 0; i < tokensArray.length; ++i) {
-        //     const token = tokensArray[i]
-        //     if (operators.includes(token) && parenthesesCount === 0) {
-        //         const tokenPriority = this.getPriority(token)
-        //         if (tokenPriority < lowPriority) {
-        //             lowPriority = tokenPriority
-        //             index = i
-        //         }
-        //     } else if (token === '(') {
-        //         ++parenthesesCount
-        //     } else if (token === ')') {
-        //         --parenthesesCount
-        //     }
-        // }
-        // return index
-        return this.forLow(tokensArray, lowPriority, parenthesesCount, 0, index)
-    }
-
-    private forLow (tokensArray: string[], lowPriority: number, parenthesesCount: number, i: number, index: number): number {
-        if (tokensArray.length === 0) {
-            return index
-        }
-
-        const token = tokensArray[0]
-        if (operators.includes(token) && parenthesesCount === 0) {
-            const tokenPriority = this.getPriority(token)
-            if (tokenPriority < lowPriority) {
-                // lowPriority = tokenPriority
-                const newIndex = i
-                return this.forLow(tokensArray.slice(1), tokenPriority, parenthesesCount, ++i, newIndex)
-            } else {
-                return this.forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
-            }
-        } else if (token === '(') {
-            return this.forLow(tokensArray.slice(1), lowPriority, ++parenthesesCount, ++i, index)
-        } else if (token === ')') {
-            return this.forLow(tokensArray.slice(1), lowPriority, --parenthesesCount, ++i, index)
-        } else {
-            return this.forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
-        }
     }
 
     private getFullEmptyTree(height: number, root?: Node | undefined) {
@@ -273,20 +154,6 @@ export class Tree {
         if (root === null) {
             return []
         }
-        // const stack: (Node | null)[] = [root]
-        // const result: (string | number | null)[] = []
-        // while (stack.length !== 0) {
-        //     const first = stack.shift()
-        //     if (first) {
-        //         stack.push(first.left, first.right)
-        //     }
-        //     if (first) {
-        //         result.push(first.value)
-        //     } else {
-        //         result.push(null)
-        //     }
-        // }
-        // return result
         return this.whileToArray([root])
     }
 
@@ -304,22 +171,121 @@ export class Tree {
 
     }
 
-    private getFullTree(root: Node | null/*, fakeRoot: Node*/): Node {
+    private getFullTree(root: Node | null): Node {
         if (root === null) {
             return new Node()
-            // return fakeRoot
         }
         const value = root.value
-        // fakeRoot.value = root.value
         const left = root.left !== null ? this.getFullTree(root.left) : null
         const right = root.right !== null ? this.getFullTree(root.right) : null
-        // if (root.left !== null) {
-        //     this.getFullTree(root.left, fakeRoot.left as Node)
-        // }
-        // if (root.right !== null) {
-        //    this.getFullTree(root.right, fakeRoot.right as Node)
-        // }
         return new Node(value, left, right)
-        // return fakeRoot
     }
 }
+
+const expr = (expression: string): Tree => {
+    const tokens = expression.split('').filter(el => el !== ' ')
+    return new Tree(gen(tokens))
+}
+
+const gen = (tokens: string[]): Node => {
+    // const root = new Node()
+    if (tokens.length === 1) {
+        return new Node(tokens[0])
+    }
+    const lowPriorityIndex = getLowPriorityToken(tokens)
+    // Если нет оператора вне скобок
+    if (lowPriorityIndex === -1) {
+        if (tokens[0] !== LEFT_PARENTHESIS || tokens[tokens.length - 1] !== RIGHT_PARENTHESIS) {
+            throw new Error(`Don't know what to do with ${tokens}`)
+        }
+        return gen(tokens.slice(1, -1))
+    }
+    const value = tokens[lowPriorityIndex]
+    const left = gen(tokens.slice(0, lowPriorityIndex))
+    const right = gen(tokens.slice(lowPriorityIndex + 1))
+    return new Node(value, left, right)
+}
+
+// Возвращает приоритет оператора: чем больше возращаемое значение - тем больше приоритет
+const getPriority = (operator: string): number => {
+    // Сгруппированы в порядке возрастания приоритета
+    const operatorsPriority = [['+', '-'], ['*', '/']]
+    operatorsPriority.forEach((item, index) => {
+        if (item.includes(operator)) {
+            return index
+        }
+    })
+    return -1
+}
+
+// Возвращает индекс оператора с наименьшим приоритетом
+const getLowPriorityToken = (tokensArray: string[]): number => {
+    const lowPriority = Number.MAX_VALUE
+    const index = -1
+    const parenthesesCount = 0
+    return forLow(tokensArray, lowPriority, parenthesesCount, 0, index)
+}
+
+const forLow = (tokensArray: string[], lowPriority: number, parenthesesCount: number, i: number, index: number): number => {
+    if (tokensArray.length === 0) {
+        return index
+    }
+
+    const token = tokensArray[0]
+    if (operators.includes(token) && parenthesesCount === 0) {
+        const tokenPriority = getPriority(token)
+        if (tokenPriority < lowPriority) {
+            // lowPriority = tokenPriority
+            const newIndex = i
+            return forLow(tokensArray.slice(1), tokenPriority, parenthesesCount, ++i, newIndex)
+        } else {
+            return forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+        }
+    } else if (token === '(') {
+        return forLow(tokensArray.slice(1), lowPriority, ++parenthesesCount, ++i, index)
+    } else if (token === ')') {
+        return forLow(tokensArray.slice(1), lowPriority, --parenthesesCount, ++i, index)
+    } else {
+        return forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+    }
+}
+
+const treeSolve = (tree: Tree | null): number => {
+    if (tree === null) {
+        return -1
+    }
+
+    return solve(tree.root)
+}
+
+const solve = (root: Node | null = null): any => {
+    if (root === null) {
+        throw new Error('Tree is empty')
+    }
+    const {value, left, right} = root
+    if (!isNaN(parseFloat(value as string))) {
+        return parseFloat(value as string)
+    } else if (operators.includes(value as string)) {
+        if (left === null || right === null) {
+            throw new Error(`Need arguments for ${value}`)
+        }
+        switch (value) {
+            case '+':
+                return solve(left) + solve(right)
+            case '-':
+                return solve(left) - solve(right)
+            case '*':
+                return solve(left) * solve(right)
+            case '/':
+                return solve(left) / solve(right)
+        }
+    } else {
+        if (typeof value === 'string' && value.trim() === '') {
+            throw new Error('Empty node')
+        } else {
+            throw new Error(`Invalid character ${value}`)
+        }
+    }
+}
+
+export {expr, treeSolve}
