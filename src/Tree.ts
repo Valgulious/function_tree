@@ -196,13 +196,9 @@ const solve = (root: Node | null = null): any => {
     }
 }
 
-const insert = (tree: Tree | null, value: string | number, level: number, position: number): Tree => {
-    if (tree === null) {
-        return new Tree()
-    }
-
+const insert = (tree: Tree, value: string | number, level: number, position: number): Tree => {
     if (position > Math.pow(2, level - 1)) {
-        return tree
+        return new Tree()
     }
 
     if (tree.root === null) {
@@ -210,7 +206,7 @@ const insert = (tree: Tree | null, value: string | number, level: number, positi
             // this.root = new Node(value)
             return new Tree(new Node(value))
         } else {
-            return tree
+            return new Tree()
         }
     }
     return new Tree(whileInsert(tree.root, position, 1, level, value))
