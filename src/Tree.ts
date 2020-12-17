@@ -3,6 +3,11 @@ import {LEFT_PARENTHESIS, operators, RIGHT_PARENTHESIS} from './types'
 // @ts-ignore
 import {treeFromArray, treeToASCII} from '../node_modules/treevis/tree'
 
+const enum PARENT {
+    LEFT = 'LEFT',
+    RIGHT = 'RIGHT'
+}
+
 export class Tree {
     root: Node | null
 
@@ -24,62 +29,6 @@ export class Tree {
         const fullTree = this.getFullTree(this.root)
         const array = Tree.toArray(fullTree)
         treeToASCII(treeFromArray(array))
-    }
-
-    //TODO
-    remove(level: number, position: number): number {
-        if (this.root === null) {
-            if (level === 1 && position === 1) {
-                return 0
-            } else {
-                return -1
-            }
-        }
-
-        let currentNode = this.root
-        let parent: Node | null = currentNode
-        let localPosition = position
-        let currentLevel = 1
-
-        const enum PARENT {
-            LEFT = 'LEFT',
-            RIGHT = 'RIGHT'
-        }
-
-        let direction: PARENT | null = null
-        while (level !== currentLevel) {
-            const middle = Math.pow(2, level - currentLevel - 1)
-            // Если нужна позиция больше чем середина (для текущего уровня)
-            if (localPosition > middle) {
-                if (currentNode.right === null) {
-                    return -1
-                }
-                localPosition -= middle
-                parent = currentNode
-                currentNode = currentNode.right
-                direction = PARENT.RIGHT
-                currentLevel++
-            } else {
-                if (currentNode.left === null) {
-                    return -1
-                }
-                parent = currentNode
-                currentNode = currentNode.left
-                direction = PARENT.LEFT
-                currentLevel++
-            }
-        }
-        if (direction && direction === PARENT.LEFT) {
-            parent.left = null
-            return 0
-        } else if (direction && direction === PARENT.RIGHT) {
-            parent.right = null
-            return 0
-        } else {
-            // deleting root
-            this.root = null
-        }
-        return -1
     }
 
     private getHeight(root: Node | null): number {
@@ -240,7 +189,6 @@ const solve = (root: Node | null = null): any => {
     }
 }
 
-//TODO
 const insert = (tree: Tree | null, value: string | number, level: number, position: number): Tree => {
     if (tree === null) {
         return new Tree()
@@ -295,4 +243,43 @@ const whileInsert = (currentNode: Node | null, localPosition: number, currentLev
     }
 }
 
-export {expr, treeSolve, insert}
+const remove = (tree: Tree, level: number, position: number): Tree => {
+    if (tree.root === null) {
+        return tree
+    }
+
+    return new Tree(whileRemove(tree.root, tree.root, position, 1, null, level))
+}
+
+const whileRemove = (currentNode: Node | null, parent: Node | null, localPosition: number,
+                     currentLevel: number, direction: PARENT | null, level: number): Node | null => {
+
+    console.log('currL = ' + currentLevel)
+
+    if (currentNode === null) {
+        console.log('curr = null')
+        return null
+    }
+
+    if (level === currentLevel) {
+        return null
+    }
+
+    const middle = Math.pow(2, level - currentLevel - 1)
+    if (localPosition > middle) {
+        if (currentNode.right === null) {
+            return currentNode
+        }
+        const newLocalPosition = localPosition - middle
+        const right = whileRemove(currentNode.right, currentNode, newLocalPosition, ++currentLevel, PARENT.RIGHT, level)
+        return new Node(currentNode.value, currentNode.left, right)
+    } else {
+        if (currentNode.left === null) {
+            return currentNode
+        }
+        const left = whileRemove(currentNode.left, currentNode, localPosition, ++currentLevel, PARENT.LEFT, level)
+        return new Node(currentNode.value, left, currentNode.right)
+    }
+}
+
+export {expr, treeSolve, insert, remove}
