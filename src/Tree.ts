@@ -24,31 +24,11 @@ export class Tree {
         treeToASCII(treeFromArray(array))
     }
 
-    printFullTree() {
-        const emptyTree = this.getFullEmptyTree(this.height)
-        const fullTree = this.getFullTree(this.root)
-        const array = Tree.toArray(fullTree)
-        treeToASCII(treeFromArray(array))
-    }
-
     private getHeight(root: Node | null): number {
         if (root === null) {
             return 0
         }
         return 1 + Math.max(this.getHeight(root.left), this.getHeight(root.right))
-    }
-
-    private getFullEmptyTree(height: number, root?: Node | undefined) {
-        if (root === undefined) {
-            root = new Node()
-        }
-        if (height > 1) {
-            root.left = new Node()
-            root.right = new Node()
-            this.getFullEmptyTree(height - 1, root.left)
-            this.getFullEmptyTree(height - 1, root.right)
-        }
-        return root
     }
 
     private static toArray(root: Node | null): (string | number | null)[] {
@@ -70,16 +50,6 @@ export class Tree {
             return [null, ...this.whileToArray([...stack.slice(1)])]
         }
 
-    }
-
-    private getFullTree(root: Node | null): Node {
-        if (root === null) {
-            return new Node()
-        }
-        const value = root.value
-        const left = root.left !== null ? this.getFullTree(root.left) : null
-        const right = root.right !== null ? this.getFullTree(root.right) : null
-        return new Node(value, left, right)
     }
 }
 
@@ -135,7 +105,7 @@ const getLowPriorityToken = (tokensArray: string[]): number => {
     const lowPriority = Number.MAX_VALUE
     const index = -1
     const parenthesesCount = 0
-    return forLow(tokensArray, lowPriority, parenthesesCount, 0, index)
+    return forLow(tokensArray, lowPriority, parenthesesCount, tokensArray.length - 1, index)
 }
 
 const forLow = (tokensArray: string[], lowPriority: number, parenthesesCount: number, i: number, index: number): number => {
@@ -143,22 +113,22 @@ const forLow = (tokensArray: string[], lowPriority: number, parenthesesCount: nu
         return index
     }
 
-    const token = tokensArray[0]
+    const token = tokensArray[tokensArray.length - 1]
     if (operators.includes(token) && parenthesesCount === 0) {
         const tokenPriority = getPriority(token)
         if (tokenPriority < lowPriority) {
             // lowPriority = tokenPriority
             const newIndex = i
-            return forLow(tokensArray.slice(1), tokenPriority, parenthesesCount, ++i, newIndex)
+            return forLow(tokensArray.slice(0, -1), tokenPriority, parenthesesCount, --i, newIndex)
         } else {
-            return forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+            return forLow(tokensArray.slice(0, -1), lowPriority, parenthesesCount, --i, index)
         }
     } else if (token === '(') {
-        return forLow(tokensArray.slice(1), lowPriority, ++parenthesesCount, ++i, index)
+        return forLow(tokensArray.slice(0, -1), lowPriority, ++parenthesesCount, --i, index)
     } else if (token === ')') {
-        return forLow(tokensArray.slice(1), lowPriority, --parenthesesCount, ++i, index)
+        return forLow(tokensArray.slice(0, -1), lowPriority, --parenthesesCount, --i, index)
     } else {
-        return forLow(tokensArray.slice(1), lowPriority, parenthesesCount, ++i, index)
+        return forLow(tokensArray.slice(0, -1), lowPriority, parenthesesCount, --i, index)
     }
 }
 
